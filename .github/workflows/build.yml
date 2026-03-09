@@ -1,0 +1,27 @@
+name: Build APK
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.0'
+      - name: Extract ZIP
+        run: unzip chat_app_flutter.zip
+      - name: Get dependencies
+        run: cd chat_app && flutter pub get
+      - name: Build APK
+        run: cd chat_app && flutter build apk --release
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: chat-app-apk
+          path: chat_app/build/app/outputs/flutter-apk/app-release.apk
